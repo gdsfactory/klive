@@ -110,7 +110,7 @@ class MyServer(pya.QTcpServer):
 
 # Start the server
 server = MyServer()
-print("klive v0.0.6 is running")
+print("klive v0.0.7 is running")
 
 
 </text>
