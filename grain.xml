@@ -3,7 +3,7 @@
  <name>klive</name>
  <token/>
  <hidden>false</hidden>
- <version>0.0.7</version>
+ <version>0.0.8</version>
  <api-version>0.27</api-version>
  <title>psiq/klive</title>
  <doc>klive server to be able to stream a gds by tcp/ip</doc>

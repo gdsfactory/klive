@@ -14,7 +14,7 @@
  <menu-path/>
  <interpreter>python</interpreter>
  <dsl-interpreter-name/>
-<text>
+ <text>
 from __future__ import print_function
 import pya
 import re
@@ -79,12 +79,6 @@ class MyServer(pya.QTcpServer):
             print("Loaded {}".format(gds_path))
             connection.write("Loaded {}".format(gds_path))
 
-            # Ping the necessary event
-            if hasattr(window, "on_klive_update"): 
-                print (window.on_klive_update) # To avoid triggering a false error
-                if window.on_klive_update:
-                    window.on_klive_update()
-                             
             # Disconnect
             connection.disconnectFromHost()
             signal = pya.qt_signal("disconnected()")
@@ -110,7 +104,7 @@ class MyServer(pya.QTcpServer):
 
 # Start the server
 server = MyServer()
-print("klive v0.0.7 is running")
+print("klive v0.0.8 is running")
 
 
 </text>
