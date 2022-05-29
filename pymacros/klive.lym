@@ -65,19 +65,43 @@ class MyServer(pya.QTcpServer):
             window = pya.Application.instance().main_window()
             current_view = window.current_view()
             previous_view = current_view.box() if current_view else None
-
-            # Load the new layout
-            window.load_layout(gds_path, 0)
-
-            # Restore the previous position
-            view = window.current_view()
-            view.max_hier()
-            if previous_view and data["keep_position"]==True:
-                view.zoom_box(previous_view)
-
-            # Report progress
-            print("Loaded {}".format(gds_path))
-            connection.write("Loaded {}".format(gds_path))
+            
+            
+            def load_existing_layout():
+                
+                for i in range(window.views()):
+                    view = window.view(i)
+                    for j in range(view.cellviews()):
+                        if view.active_cellview().filename() == gds_path:
+                            print("File {} already openend".format(view.active_cellview().filename()))
+                            window.	current_view_index = i
+                            view.active_setview_index = j
+                            connection.write("Reloaded {}".format(gds_path))
+                            return
+                else:
+                
+                    # Load the new layout
+                    new_cview = window.load_layout(gds_path, 1)
+                    new_view = new_cview.view()
+                    new_view.max_hier()
+                    window.current_view_index = window.index_of(new_view)
+                    connection.write("Loaded {}".format(gds_path))
+            
+            if window.views() &gt; 0:
+                load_existing_layout()
+            else:
+                # Load the new layout
+                window.load_layout(gds_path, 1)
+    
+                # Restore the previous position
+                view = window.current_view()
+                view.max_hier()
+                if previous_view and data["keep_position"]==True:
+                    view.zoom_box(previous_view)
+    
+                # Report progress
+                print("Loaded {}".format(gds_path))
+                connection.write("Loaded {}".format(gds_path))
 
             # Disconnect
             connection.disconnectFromHost()
