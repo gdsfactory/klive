@@ -25,7 +25,7 @@ is_python3 = sys.version_info.major==3
 if is_python3:
     import codecs
 
-class MyServer(pya.QTcpServer):
+class KLiveServer(pya.QTcpServer):
     """
     Implements a TCP server listening on port 8082.
     You can use it to instantly load a GDS file, programmatically, from Python.
@@ -124,11 +124,12 @@ class MyServer(pya.QTcpServer):
 
         # install an event on a new connection
         self.newConnection(self.new_connection)
+        print("klive v0.1.0 is running")
 
 
 # Start the server
-server = MyServer()
-print("klive v0.0.8 is running")
+server = KLiveServer()
+
 
 
 </text>
