@@ -117,14 +117,14 @@ class KLiveServer(pya.QTcpServer):
         Initialize the server and put into listen mode (port is 8082)
         """
 
-        super(MyServer, self).__init__(parent)
+        super(KLiveServer, self).__init__(parent)
 
         ha = pya.QHostAddress.new_ip4(0)
         self.listen(ha, 8082)
 
         # install an event on a new connection
         self.newConnection(self.new_connection)
-        print("klive v0.1.0 is running")
+        print("klive v0.1.1 is running")
 
 
 # Start the server
