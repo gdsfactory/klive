@@ -14,16 +14,11 @@
  <menu-path/>
  <interpreter>python</interpreter>
  <dsl-interpreter-name/>
- <text>
-from __future__ import print_function
-import pya
+ <text>import pya
 import re
 import json
 import sys
-is_python3 = sys.version_info.major==3
-
-if is_python3:
-    import codecs
+import codecs
 
 class KLiveServer(pya.QTcpServer):
     """
@@ -50,58 +45,59 @@ class KLiveServer(pya.QTcpServer):
             while connection.isOpen() and connection.state() == pya.QTcpSocket.ConnectedState:
                 if connection.canReadLine():
                     line = connection.readLine()
-                    if is_python3:
-                        pass
-                    else: 
-                        line = line .decode("utf-8")
                     data = json.loads(line)
+                    # Interpret the data
+                    gds_path = data["gds"]
+        
+                    # Store the current view
+                    window = pya.Application.instance().main_window()
+                    current_view = window.current_view()
+                    previous_view = current_view.box() if current_view else None
+                    
+                    
+                    def load_existing_layout():
+                        
+                        for i in range(window.views()):
+                            view = window.view(i)
+                            for j in range(view.cellviews()):
+                                if view.active_cellview().filename() == gds_path:
+                                    print("File {} already openend".format(view.active_cellview().filename()))
+                                    window.	current_view_index = i
+                                    view.active_setview_index = j
+                                    print("Reloaded {}".format(gds_path).encode("utf-8"))
+                                    connection.write("Reloaded {}".format(gds_path).encode("utf-8"))
+                                    connection.flush()
+                                    return
+                        else:
+                        
+                            # Load the new layout
+                            new_cview = window.load_layout(gds_path, 1)
+                            new_view = new_cview.view()
+                            new_view.max_hier()
+                            window.current_view_index = window.index_of(new_view)
+                            connection.write("Loaded {}".format(gds_path).encode("utf-8"))
+                            connection.flush()
+                    
+                    if window.views() &gt; 0:
+                        load_existing_layout()
+                    else:
+                        # Load the new layout
+                        window.load_layout(gds_path, 1)
+            
+                        # Restore the previous position
+                        view = window.current_view()
+                        view.max_hier()
+                        if previous_view and data["keep_position"]==True:
+                            view.zoom_box(previous_view)
+            
+                        # Report progress
+                        print("Loaded {}".format(gds_path))
+                        connection.write("Loaded {}".format(gds_path).encode("utf-8"))
+                        connection.flush()
                 else:
                     connection.waitForReadyRead(100)
 
-            # Interpret the data
-            gds_path = data["gds"]
-
-            # Store the current view
-            window = pya.Application.instance().main_window()
-            current_view = window.current_view()
-            previous_view = current_view.box() if current_view else None
             
-            
-            def load_existing_layout():
-                
-                for i in range(window.views()):
-                    view = window.view(i)
-                    for j in range(view.cellviews()):
-                        if view.active_cellview().filename() == gds_path:
-                            print("File {} already openend".format(view.active_cellview().filename()))
-                            window.	current_view_index = i
-                            view.active_setview_index = j
-                            connection.write("Reloaded {}".format(gds_path))
-                            return
-                else:
-                
-                    # Load the new layout
-                    new_cview = window.load_layout(gds_path, 1)
-                    new_view = new_cview.view()
-                    new_view.max_hier()
-                    window.current_view_index = window.index_of(new_view)
-                    connection.write("Loaded {}".format(gds_path))
-            
-            if window.views() &gt; 0:
-                load_existing_layout()
-            else:
-                # Load the new layout
-                window.load_layout(gds_path, 1)
-    
-                # Restore the previous position
-                view = window.current_view()
-                view.max_hier()
-                if previous_view and data["keep_position"]==True:
-                    view.zoom_box(previous_view)
-    
-                # Report progress
-                print("Loaded {}".format(gds_path))
-                connection.write("Loaded {}".format(gds_path))
 
             # Disconnect
             connection.disconnectFromHost()
@@ -124,7 +120,7 @@ class KLiveServer(pya.QTcpServer):
 
         # install an event on a new connection
         self.newConnection(self.new_connection)
-        print("klive v0.1.1 is running")
+        print("klive v0.1.2 is running")
 
 
 # Start the server
