@@ -64,7 +64,6 @@ class KLiveServer(pya.QTcpServer):
                                     print("File {} already openend".format(view.active_cellview().filename()))
                                     window.	current_view_index = i
                                     view.active_setview_index = j
-                                    print("Reloaded {}".format(gds_path).encode("utf-8"))
                                     connection.write("Reloaded {}".format(gds_path).encode("utf-8"))
                                     connection.flush()
                                     return
