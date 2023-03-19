@@ -3,9 +3,9 @@
  <name>klive</name>
  <token/>
  <hidden>false</hidden>
- <version>0.1.4</version>
+ <version>0.1.5</version>
  <api-version>0.27</api-version>
- <title>psiq/klive</title>
+ <title>klive</title>
  <doc>klive server to be able to stream a gds by tcp/ip</doc>
  <doc-url>doc/readme.html</doc-url>
  <url/>
