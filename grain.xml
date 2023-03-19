@@ -3,13 +3,13 @@
  <name>klive</name>
  <token/>
  <hidden>false</hidden>
- <version>0.1.5</version>
+ <version>0.1.6</version>
  <api-version>0.27</api-version>
  <title>klive</title>
  <doc>klive server to be able to stream a gds by tcp/ip</doc>
  <doc-url>doc/readme.html</doc-url>
  <url/>
- <license>GPLv3</license>
+ <license>MIT</license>
  <author>PsiQ</author>
  <author-contact>sgoeldi@psiquantum.com</author-contact>
  <authored-time/>

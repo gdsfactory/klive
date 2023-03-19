@@ -122,7 +122,7 @@ class KLiveServer(pya.QTcpServer):
 
         # install an event on a new connection
         self.newConnection(self.new_connection)
-        print("klive v0.1.5 is running")
+        print("klive v0.1.6 is running")
 
 
 # Start the server
