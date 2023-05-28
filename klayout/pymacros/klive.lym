@@ -8,6 +8,7 @@
  <doc/>
  <autorun>true</autorun>
  <autorun-early>false</autorun-early>
+ <priority>0</priority>
  <shortcut/>
  <show-in-menu>false</show-in-menu>
  <group-name/>
@@ -19,6 +20,24 @@ import re
 import json
 import sys
 import codecs
+from pathlib import Path
+from time import sleep
+
+app = pya.Application.instance()
+mw = app.main_window()
+
+_path = Path(__file__).parent.parent
+off = str(_path/"Koff.png")
+live = str(_path/"Klive.png")
+recv = str(_path/"Krecv.png")
+
+klive_action = pya.Action()
+klive_action.icon = off
+klive_action.icon_text = "klive"
+menu =  mw.menu()
+menu.insert_item("@toolbar.end", "klive_action", klive_action)
+
+
 
 class KLiveServer(pya.QTcpServer):
     """
@@ -34,7 +53,10 @@ class KLiveServer(pya.QTcpServer):
         """
 
         try:
-
+            self.action.icon = recv
+            sleep(1)
+            self.app.process_events()
+            
             url = None
 
             # Get a new connection object
@@ -107,28 +129,45 @@ class KLiveServer(pya.QTcpServer):
             slot = pya.qt_slot("deleteLater()")
             pya.QObject.connect(connection, signal, connection, slot)
 
+            sleep(1)
+
+            self.action.icon = live
+
         except Exception as ex:
             print("ERROR " + str(ex))
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, action=None):
         """
-        Initialize the server and put into listen mode (port is 8082)
+        Initialize the server and put into listen mode (port is tcp/8082)
         """
 
         super(KLiveServer, self).__init__(parent)
-
         ha = pya.QHostAddress.new_ip4(0)
         self.listen(ha, 8082)
-
-        # install an event on a new connection
         self.newConnection(self.new_connection)
-        print("klive v0.1.6 is running")
+        self.action = action
+        if self.action is not None and self.isListening():
+            print("klive v0.1.7 is running")
+            self.action.icon = live
+        else:
+            print("klive didn't start correctly. Most likely port tcp/8082")
+        self.app = app = pya.Application.instance()
+    
+    def on_action_click(self):
+        self.close()
+        self.action.icon = off
+        self.app.process_events()
+        sleep(0.1)
+        server = KLiveServer(parent=mw, action=klive_action)
+        self.action.on_triggered = server.on_action_click
 
+
+    def close(self):
+        super().close()
+        self.action.icon = off
 
 # Start the server
-server = KLiveServer()
-
-
-
+server = KLiveServer(parent=mw, action=klive_action)
+klive_action.on_triggered = server.on_action_click
 </text>
 </klayout-macro>

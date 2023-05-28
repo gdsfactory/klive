@@ -1,0 +1,42 @@
+*.gds
+*.txt
+*.ports
+*.json
+*.7z
+*.tar
+*.zip
+.idea
+gds/
+Pipfile
+docs/_build/
+
+# Packages
+*.egg
+*.egg-info
+*.swp
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+env
+venv
+/site
+_version.py
+
+# Installer logs
+pip-log.txt
+extra/
+docs/_autosummary
+docs/modules
+
+# ipython
+.ipynb_checkpoints
+*.ipynb

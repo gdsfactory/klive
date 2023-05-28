@@ -1,0 +1,43 @@
+site_name: klive
+repo_url: https://github.com/gdsfactory/klive
+site_url: https://gdsfactory.github.io/klive
+
+nav:
+  - Home: index.md
+  - Troubleshooting: troubleshooting.md
+  - Development: dev.md 
+theme:
+  name: "material"
+  logo: "_static/Klive.png"
+  features:
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+
+  palette:
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+   # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mod
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tabbed
+  - pymdownx.emoji
+  - pymdownx.tilde
+  - pymdownx.snippets:
+      check_paths: true
+
+plugins:
+  - mkdocs-video:
+      is_video: true
+      video_type: webm
+      video_muted: true
+  - search
+  - section-index
