@@ -29,11 +29,11 @@ tcp        0      0 0.0.0.0:8082            0.0.0.0:*               LISTEN      
 ### CMD
 
 ```
-netstat -na | find "8080"
+netstat -na | find "8082"
 ```
 
 ### PowerShell
 
 ```
-netstat -na | Select-String "8080"
+netstat -na | Select-String "8082"
 ```
