@@ -1,0 +1,1 @@
+Fixed changlog.d url in CHANGELOG.md
