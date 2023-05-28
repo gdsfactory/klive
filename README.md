@@ -1,4 +1,4 @@
-# klive 0.1.7
+# klive 0.2.0
 
 klive is a small extension to KLayout that allows automatic loading for GDS files by sending a json with the gds path to klive.
 
