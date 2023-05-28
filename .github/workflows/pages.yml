@@ -20,7 +20,7 @@ jobs:
       - name: mkdocs build
         shell: bash -l {0}
         run: |
-          python -m pip install mkdocs mkdocs-material mkdocs-secion-index mkdocs-video pymdown-extensions
+          python -m pip install mkdocs mkdocs-material mkdocs-section-index mkdocs-video pymdown-extensions
           make docs
       - uses: actions/upload-pages-artifact@v1
         with:
