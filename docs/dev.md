@@ -34,3 +34,13 @@ The following will work under linux, but should also work in MacOS or PowerShell
 ```bash
 ln -s <path_to_klive_repository>/klayout $HOME/.klayout-dev/salt/klive
 ```
+
+## Build docs
+
+Install mkdocs with
+
+```bash
+python -m pip install mkdocs mkdocs-material mkdocs-section-index mkdocs-video pymdown-extensions
+```
+
+To use it locally run `make docs`. To use the internal mkdocs serve `make docs-serve`
