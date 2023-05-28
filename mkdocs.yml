@@ -6,6 +6,7 @@ nav:
   - Home: index.md
   - Troubleshooting: troubleshooting.md
   - Development: dev.md 
+  - Changelog: changelog.md
 theme:
   name: "material"
   logo: "_static/Klive.png"
