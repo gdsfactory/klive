@@ -18,6 +18,8 @@ gdsfactory KLayout package aren't compatible.
 
 klive will create an action button on the right of the Technology button in the toolbar. It will change the icon depending on the status.
 
+It can be restarted by clicking on the klive symbool in the toolbar.
+
 ### Green
 
 ![Online](_static/Klive.png)
