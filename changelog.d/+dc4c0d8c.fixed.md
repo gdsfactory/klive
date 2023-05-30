@@ -1,0 +1,1 @@
+Fixed klive server stopping to work if the klive.lym script was called multiple times

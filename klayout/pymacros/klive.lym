@@ -16,12 +16,9 @@
  <interpreter>python</interpreter>
  <dsl-interpreter-name/>
  <text>import pya
-import re
-import json
-import sys
-import codecs
+
 from pathlib import Path
-from time import sleep
+from klive_server import server
 
 app = pya.Application.instance()
 mw = app.main_window()
@@ -38,136 +35,7 @@ menu =  mw.menu()
 menu.insert_item("@toolbar.end", "klive_action", klive_action)
 
 
-
-class KLiveServer(pya.QTcpServer):
-    """
-    Implements a TCP server listening on port 8082.
-    You can use it to instantly load a GDS file, programmatically, from Python.
-    Just send a JSON-formatted command to localhost:8082.
-    See README for more details.
-    """
-
-    def new_connection(self):
-        """
-        Handler for a new connection
-        """
-
-        try:
-            self.action.icon = recv
-            sleep(1)
-            self.app.process_events()
-            
-            url = None
-
-            # Get a new connection object
-            connection = self.nextPendingConnection()
-
-            # Read in the request
-            data = None
-            while connection.isOpen() and connection.state() == pya.QTcpSocket.ConnectedState:
-                if connection.canReadLine():
-                    line = connection.readLine()
-                    data = json.loads(line)
-                    # Interpret the data
-                    gds_path = data["gds"]
-        
-                    # Store the current view
-                    window = pya.Application.instance().main_window()
-                    current_view = window.current_view()
-                    previous_view = current_view.box() if current_view else None
-                    
-                    
-                    def load_existing_layout():
-                        
-                        for i in range(window.views()):
-                            view = window.view(i)
-                            for j in range(view.cellviews()):
-                                if view.active_cellview().filename() == gds_path:
-                                    print("File {} already openend".format(view.active_cellview().filename()))
-                                    window.current_view_index = i
-                                    view.active_setview_index = j
-                                    view.reload_layout(j)
-                                    if view.active_cellview().cell is None:
-                                        view.active_cellview().cell = view.active_cellview().layout().top_cells()[0]
-                                    connection.write("Reloaded {}".format(gds_path).encode("utf-8"))
-                                    connection.flush()
-                                    return
-                        else:
-                        
-                            # Load the new layout
-                            new_cview = window.load_layout(gds_path, 1)
-                            new_view = new_cview.view()
-                            new_view.max_hier()
-                            window.current_view_index = window.index_of(new_view)
-                            connection.write("Loaded {}".format(gds_path).encode("utf-8"))
-                            connection.flush()
-                    
-                    if window.views() &gt; 0:
-                        load_existing_layout()
-                    else:
-                        # Load the new layout
-                        window.load_layout(gds_path, 1)
-            
-                        # Restore the previous position
-                        view = window.current_view()
-                        view.max_hier()
-                        if previous_view and data["keep_position"]==True:
-                            view.zoom_box(previous_view)
-            
-                        # Report progress
-                        print("Loaded {}".format(gds_path))
-                        connection.write("Loaded {}".format(gds_path).encode("utf-8"))
-                        connection.flush()
-                else:
-                    connection.waitForReadyRead(100)
-
-            
-
-            # Disconnect
-            connection.disconnectFromHost()
-            signal = pya.qt_signal("disconnected()")
-            slot = pya.qt_slot("deleteLater()")
-            pya.QObject.connect(connection, signal, connection, slot)
-
-            sleep(1)
-
-            self.action.icon = live
-
-        except Exception as ex:
-            print("ERROR " + str(ex))
-
-    def __init__(self, parent=None, action=None):
-        """
-        Initialize the server and put into listen mode (port is tcp/8082)
-        """
-
-        super(KLiveServer, self).__init__(parent)
-        ha = pya.QHostAddress.new_ip4(0)
-        self.listen(ha, 8082)
-        self.newConnection(self.new_connection)
-        self.action = action
-        if self.action is not None and self.isListening():
-            print("klive v0.2.0 is running")
-            self.action.icon = live
-        else:
-            print("klive didn't start correctly. Most likely port tcp/8082")
-        self.app = app = pya.Application.instance()
-    
-    def on_action_click(self):
-        self.close()
-        self.action.icon = off
-        self.app.process_events()
-        sleep(0.1)
-        server = KLiveServer(parent=mw, action=klive_action)
-        self.action.on_triggered = server.on_action_click
-
-
-    def close(self):
-        super().close()
-        self.action.icon = off
-
 # Start the server
-server = KLiveServer(parent=mw, action=klive_action)
-klive_action.on_triggered = server.on_action_click
+server.reset(klive_action)
 </text>
 </klayout-macro>
