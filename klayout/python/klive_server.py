@@ -27,7 +27,6 @@ class ServerInstance(pya.QTcpServer):
 
         try:
             self.action.icon = recv
-            sleep(1)
             self.app.process_events()
             
             url = None
@@ -109,8 +108,6 @@ class ServerInstance(pya.QTcpServer):
             signal = pya.qt_signal("disconnected()")
             slot = pya.qt_slot("deleteLater()")
             pya.QObject.connect(connection, signal, connection, slot)
-
-            sleep(1)
 
             self.action.icon = live
 
