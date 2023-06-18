@@ -146,7 +146,7 @@ class ServerInstance(pya.QTcpServer):
         self.server = server
         if self.action is not None and self.isListening():
             self.action.on_triggered = self.on_action_click
-            print("klive v0.2.2 is running")
+            print("klive 0.2.2 is running")
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")

@@ -29,7 +29,7 @@ src = "README.md"
 src = "klayout/grain.xml"
 
 [[file]]
-src = "docs/troubleshooting.xml"
+src = "docs/troubleshooting.md"
 
 [[file]]
 src = "klayout/python/klive_server.py"
