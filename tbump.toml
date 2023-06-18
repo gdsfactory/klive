@@ -29,6 +29,9 @@ src = "README.md"
 src = "klayout/grain.xml"
 
 [[file]]
+src = "docs/troubleshooting.xml"
+
+[[file]]
 src = "klayout/python/klive_server.py"
 # You can specify a list of commands to
 # run after the files have been patched

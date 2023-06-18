@@ -18,24 +18,29 @@
  <text>import pya
 
 from pathlib import Path
-from klive_server import server
+from klive_server import server, toggle_ports, update_icon
 
 app = pya.Application.instance()
 mw = app.main_window()
+menu =  mw.menu()
 
 _path = Path(__file__).parent.parent
 off = str(_path/"Koff.png")
-live = str(_path/"Klive.png")
-recv = str(_path/"Krecv.png")
+poff = str(_path/"PortOff.png")
 
-klive_action = pya.Action()
-klive_action.icon = off
-klive_action.icon_text = "klive"
-menu =  mw.menu()
-menu.insert_item("@toolbar.end", "klive_action", klive_action)
+reset_server = pya.Action()
+reset_server.icon_text = "Restart klive"
+reset_server.icon = off
+menu.insert_item("@toolbar.end", "reset_server", reset_server)
 
+port_action = pya.Action()
+port_action.icon = poff
+port_action.on_triggered = lambda: toggle_ports(port_action)
+port_action.icon_text = "Show Ports"
+menu.insert_item("@toolbar.end", "klive_action", port_action)
+mw.on_current_view_changed = lambda: update_icon(port_action)
 
 # Start the server
-server.reset(klive_action)
+server.reset(reset_server)
 </text>
 </klayout-macro>
