@@ -6,8 +6,6 @@ from typing import Optional
 
 import pya
 
-version = '0.2.3'
-
 _path = Path(__file__).parent.parent
 off = str(_path / "Koff.png")
 live = str(_path / "Klive.png")
@@ -55,8 +53,6 @@ class ServerInstance(pya.QTcpServer):
                     line = connection.readLine()
                     data = json.loads(line)
                     # Interpret the data
-                    if "gds" in data:
-                        gds_path = data["gds"]
                     if "lyrdb" in data:
                         lyrdb_path = data["lyrdb"]
 
@@ -65,7 +61,7 @@ class ServerInstance(pya.QTcpServer):
                     current_view = window.current_view()
                     previous_view = current_view.box() if current_view else None
 
-                    send_data = {"version": version }
+                    send_data = {"version": "0.2.2"}
 
                     def load_existing_layout():
                         for i in range(window.views()):
@@ -156,7 +152,7 @@ class ServerInstance(pya.QTcpServer):
         self.server = server
         if self.action is not None and self.isListening():
             self.action.on_triggered = self.on_action_click
-            print("klive %s is running" %version)
+            print("klive 0.2.2 is running")
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")
@@ -168,7 +164,7 @@ class ServerInstance(pya.QTcpServer):
     def close(self):
         super().close()
 
-        print("klive %s stopped" %version )
+        print("klive 0.2.2 stopped")
         if self.action is not None and not self.action._destroyed():
             self.action.icon = off
 
