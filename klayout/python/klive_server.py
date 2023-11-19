@@ -52,7 +52,9 @@ class ServerInstance(pya.QTcpServer):
                 if connection.canReadLine():
                     line = connection.readLine()
                     data = json.loads(line)
+
                     # Interpret the data
+                    gds_path = data["gds"]
                     if "lyrdb" in data:
                         lyrdb_path = data["lyrdb"]
 
