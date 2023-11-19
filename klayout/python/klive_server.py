@@ -6,6 +6,8 @@ from typing import Optional
 
 import pya
 
+version = '0.2.3'
+
 _path = Path(__file__).parent.parent
 off = str(_path / "Koff.png")
 live = str(_path / "Klive.png")
@@ -24,7 +26,7 @@ prefix = "kfactory:ports:"
 class ServerInstance(pya.QTcpServer):
     """
     Implements a TCP server listening on port 8082.
-    You can use it to instantly load a GDS file, programmatically, from Python.
+    You can use it to instantly load a GDS or lyrdb (Results Database) file, programmatically, from Python.
     Just send a JSON-formatted command to localhost:8082.
     See README for more details.
     """
@@ -53,14 +55,17 @@ class ServerInstance(pya.QTcpServer):
                     line = connection.readLine()
                     data = json.loads(line)
                     # Interpret the data
-                    gds_path = data["gds"]
+                    if "gds" in data:
+                        gds_path = data["gds"]
+                    if "lyrdb" in data:
+                        lyrdb_path = data["lyrdb"]
 
                     # Store the current view
                     window = pya.Application.instance().main_window()
                     current_view = window.current_view()
                     previous_view = current_view.box() if current_view else None
 
-                    send_data = {"version": "0.2.2"}
+                    send_data = {"version": version }
 
                     def load_existing_layout():
                         for i in range(window.views()):
@@ -87,7 +92,7 @@ class ServerInstance(pya.QTcpServer):
                                         json.dumps(send_data).encode("utf-8")
                                     )
                                     connection.flush()
-                                    return
+                                    return view
                         else:
                             # Load the new layout
                             new_cview = window.load_layout(gds_path, 1)
@@ -98,9 +103,9 @@ class ServerInstance(pya.QTcpServer):
                             send_data["file"] = gds_path
                             connection.write(json.dumps(send_data).encode("utf-8"))
                             connection.flush()
-
+                            return new_view
                     if window.views() > 0:
-                        load_existing_layout()
+                        view = load_existing_layout()
                     else:
                         # Load the new layout
                         window.load_layout(gds_path, 1)
@@ -117,6 +122,11 @@ class ServerInstance(pya.QTcpServer):
                         send_data["file"] = gds_path
                         connection.write(json.dumps(send_data).encode("utf-8"))
                         connection.flush()
+                    if "lyrdb" in data:
+                        lyrdb_path = data["lyrdb"]
+                        rdb = pya.ReportDatabase().load(lyrdb_path)
+                        rdb_i = view.add_rdb(rdb)
+                        view.show_rdb(rdb_i, view.active_cellview().cell_index)
                 else:
                     connection.waitForReadyRead(100)
 
@@ -146,7 +156,7 @@ class ServerInstance(pya.QTcpServer):
         self.server = server
         if self.action is not None and self.isListening():
             self.action.on_triggered = self.on_action_click
-            print("klive 0.2.2 is running")
+            print("klive %s is running" %version)
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")
@@ -158,7 +168,7 @@ class ServerInstance(pya.QTcpServer):
     def close(self):
         super().close()
 
-        print("klive 0.2.2 stopped")
+        print("klive %s stopped" %version )
         if self.action is not None and not self.action._destroyed():
             self.action.icon = off
 
