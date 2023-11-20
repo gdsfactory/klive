@@ -24,7 +24,7 @@ prefix = "kfactory:ports:"
 class ServerInstance(pya.QTcpServer):
     """
     Implements a TCP server listening on port 8082.
-    You can use it to instantly load a GDS file, programmatically, from Python.
+    You can use it to instantly load a GDS or lyrdb (Results Database) file, programmatically, from Python.
     Just send a JSON-formatted command to localhost:8082.
     See README for more details.
     """
@@ -52,8 +52,11 @@ class ServerInstance(pya.QTcpServer):
                 if connection.canReadLine():
                     line = connection.readLine()
                     data = json.loads(line)
+
                     # Interpret the data
                     gds_path = data["gds"]
+                    if "lyrdb" in data:
+                        lyrdb_path = data["lyrdb"]
 
                     # Store the current view
                     window = pya.Application.instance().main_window()
@@ -87,7 +90,7 @@ class ServerInstance(pya.QTcpServer):
                                         json.dumps(send_data).encode("utf-8")
                                     )
                                     connection.flush()
-                                    return
+                                    return view
                         else:
                             # Load the new layout
                             new_cview = window.load_layout(gds_path, 1)
@@ -98,9 +101,9 @@ class ServerInstance(pya.QTcpServer):
                             send_data["file"] = gds_path
                             connection.write(json.dumps(send_data).encode("utf-8"))
                             connection.flush()
-
+                            return new_view
                     if window.views() > 0:
-                        load_existing_layout()
+                        view = load_existing_layout()
                     else:
                         # Load the new layout
                         window.load_layout(gds_path, 1)
@@ -117,6 +120,11 @@ class ServerInstance(pya.QTcpServer):
                         send_data["file"] = gds_path
                         connection.write(json.dumps(send_data).encode("utf-8"))
                         connection.flush()
+                    if "lyrdb" in data:
+                        lyrdb_path = data["lyrdb"]
+                        rdb = pya.ReportDatabase().load(lyrdb_path)
+                        rdb_i = view.add_rdb(rdb)
+                        view.show_rdb(rdb_i, view.active_cellview().cell_index)
                 else:
                     connection.waitForReadyRead(100)
 
