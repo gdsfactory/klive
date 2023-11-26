@@ -55,8 +55,6 @@ class ServerInstance(pya.QTcpServer):
 
                     # Interpret the data
                     gds_path = data["gds"]
-                    if "lyrdb" in data:
-                        lyrdb_path = data["lyrdb"]
 
                     # Store the current view
                     window = pya.Application.instance().main_window()
@@ -125,6 +123,14 @@ class ServerInstance(pya.QTcpServer):
                         rdb = pya.ReportDatabase().load(lyrdb_path)
                         rdb_i = view.add_rdb(rdb)
                         view.show_rdb(rdb_i, view.active_cellview().cell_index)
+                    if "l2n" in data:
+                        l2n_path = data["l2n"]
+                        l2n = pya.LayoutToNetlist()
+                        l2n.read(l2n_path)
+                        l2n_i = view.add_l2ndb(l2n)
+                        view.show_l2ndb(l2n_i, view.active_cellview().cell_index)
+                        
+                        
                 else:
                     connection.waitForReadyRead(100)
 
