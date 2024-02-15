@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from time import sleep
 from typing import Optional
@@ -63,6 +63,12 @@ class ServerInstance(pya.QTcpServer):
 
                     send_data = {"version": "0.2.2"}
 
+                    libs = data.get("libraries", {})
+                    for lib_dict in libs:
+                        lib = pya.Library()
+                        lib.register(lib_dict["name"])
+                        lib.layout().read(lib_dict["file"])
+
                     def load_existing_layout():
                         for i in range(window.views()):
                             view = window.view(i)
@@ -100,6 +106,7 @@ class ServerInstance(pya.QTcpServer):
                             connection.write(json.dumps(send_data).encode("utf-8"))
                             connection.flush()
                             return new_view
+
                     if window.views() > 0:
                         view = load_existing_layout()
                     else:
@@ -129,8 +136,7 @@ class ServerInstance(pya.QTcpServer):
                         l2n.read(l2n_path)
                         l2n_i = view.add_l2ndb(l2n)
                         view.show_l2ndb(l2n_i, view.active_cellview().cell_index)
-                        
-                        
+
                 else:
                     connection.waitForReadyRead(100)
 
