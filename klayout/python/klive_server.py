@@ -178,7 +178,7 @@ class ServerInstance(pya.QTcpServer):
     def close(self):
         super().close()
 
-        print("klive 0.3.0 stopped")
+        print("klive v0.3.0 stopped")
         if self.action is not None and not self.action._destroyed():
             self.action.icon = off
 
