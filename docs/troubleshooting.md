@@ -5,7 +5,7 @@ bey opening the macro editor under `Macros -> Macro Development` (or by pressing
 
 In the editor, go to the python section on the left and
 look for the "Package klive" folder and open the `klive` script. Run it with the "Run scrip from current tab" (or \[Shift + F5\]).
-Make sure to switch the Console on the bottom to python. If you don't get an error message or don't see a "klive 0.2.2 is running",
+Make sure to switch the Console on the bottom to python. If you don't get an error message or don't see a "klive 0.3.0 is running",
 klive is not running. If you cannot debug your problem, please feel free to open an
 issue on [GitHub](https://github.com/gdsfactory/klive/issues).
 
