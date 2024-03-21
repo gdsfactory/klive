@@ -61,7 +61,7 @@ class ServerInstance(pya.QTcpServer):
                     current_view = window.current_view()
                     previous_view = current_view.box() if current_view else None
 
-                    send_data = {"version": "0.3.0"}
+                    send_data = {"version": "0.3.1"}
 
                     libs = data.get("libraries", {})
                     for lib_dict in libs:
@@ -166,7 +166,7 @@ class ServerInstance(pya.QTcpServer):
         self.server = server
         if self.action is not None and self.isListening():
             self.action.on_triggered = self.on_action_click
-            print("klive 0.3.0 is running")
+            print("klive 0.3.1 is running")
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")
@@ -178,7 +178,7 @@ class ServerInstance(pya.QTcpServer):
     def close(self):
         super().close()
 
-        print("klive 0.3.0 stopped")
+        print("klive 0.3.1 stopped")
         if self.action is not None and not self.action._destroyed():
             self.action.icon = off
 
