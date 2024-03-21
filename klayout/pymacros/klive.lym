@@ -18,7 +18,7 @@
  <text>import pya
 
 from pathlib import Path
-from klive_server import server, toggle_ports, update_icon
+from klive_server import server, update_icon
 
 app = pya.Application.instance()
 mw = app.main_window()
@@ -32,13 +32,6 @@ reset_server = pya.Action()
 reset_server.icon_text = "Restart klive"
 reset_server.icon = off
 menu.insert_item("@toolbar.end", "reset_server", reset_server)
-
-port_action = pya.Action()
-port_action.icon = poff
-port_action.on_triggered = lambda: toggle_ports(port_action)
-port_action.icon_text = "Show Ports"
-menu.insert_item("@toolbar.end", "klive_action", port_action)
-mw.on_current_view_changed = lambda: update_icon(port_action)
 
 # Start the server
 server.reset(reset_server)
