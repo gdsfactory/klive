@@ -59,7 +59,7 @@ class ServerInstance(pya.QTcpServer):
                     current_view = window.current_view()
                     previous_view = current_view.box() if current_view else None
 
-                    send_data = {"version": "0.3.2"}
+                    send_data = {"version": "0.3.2", "klayout_version": pya.__version__}
 
                     libs = data.get("libraries", {})
                     for lib_dict in libs:
