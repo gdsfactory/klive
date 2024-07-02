@@ -9,8 +9,7 @@ klive starts a QTcpServer on port tcp/8082 binding to localhost. Projects like [
 
 To install klive, open KLayout and open the package manger under `Tools -> Manage Packages`. In the package manager search for `klive`,
 double-click it, check that it has a green check mark on it and press `Apply` on the bottom left. When asked to run the initial script press
-`Yes` in order to start klive. Please make sure that you don't have `gdsfactory` installed anymore. This klive and the klive from the
-gdsfactory KLayout package aren't compatible.
+`Yes` in order to start klive. 
 
 ![type:video](_static/klive.webm "klive installation")
 
