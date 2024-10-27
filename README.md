@@ -2,7 +2,7 @@
 
 klive is a small extension to KLayout that allows automatic loading for GDS files by sending a json with the gds path to klive.
 
-klive starts a QTcpServer on port tcp/8082 binding to localhost. Projects like [kfactory](https://github.com/gdsfactory/kfactory) and
+klive starts a QTcpServer on port tcp/8082 binding to localhost. Projects like [SiEPIC-Tools for KLayout](https://github.com/SiEPIC/SiEPIC-Tools), [kfactory](https://github.com/gdsfactory/kfactory) and
 [gdsfactory](https://github.com/gdsfactory/gdsfactory) use this to make use of `show`.
 
 ## Installation
