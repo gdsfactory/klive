@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     name: build docs
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       - name: mkdocs build
         shell: bash -l {0}
         run: |
           python -m pip install mkdocs mkdocs-material mkdocs-section-index mkdocs-video pymdown-extensions
           make docs
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
           path: "./site/"
@@ -41,4 +41,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
