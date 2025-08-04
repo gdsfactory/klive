@@ -36,8 +36,6 @@ class ServerInstance(pya.QTcpServer):
             self.action.icon = recv
             self.app.process_events()
 
-            url = None
-
             # Get a new connection object
             connection = self.nextPendingConnection()
 
@@ -67,6 +65,8 @@ class ServerInstance(pya.QTcpServer):
                         lib.register(lib_dict["name"])
                         lib.layout().read(lib_dict["file"])
 
+                    technology = data.get("technology", None)
+
                     def load_existing_layout():
                         for i in range(window.views()):
                             view = window.view(i)
@@ -77,9 +77,29 @@ class ServerInstance(pya.QTcpServer):
                                             view.active_cellview().filename()
                                         )
                                     )
+
                                     window.current_view_index = i
                                     view.active_setview_index = j
                                     view.reload_layout(j)
+                                    if technology is not None:
+                                        available_technologies = (
+                                            pya.Technology.technology_names()
+                                        )
+                                        if technology in available_technologies:
+                                            if (
+                                                view.active_cellview().technology
+                                                != technology
+                                            ):
+                                                view.active_cellview().technology = (
+                                                    technology
+                                                )
+                                        else:
+                                            send_data["info"] = (
+                                                f"Technology {technology!r} is not available. "
+                                                "Available technologies are "
+                                                f"{pya.Technology.technology_names()}. "
+                                                f"Are you sure you have installed the technology in klayout?"
+                                            )
                                     if view.active_cellview().cell is None:
                                         view.active_cellview().cell = (
                                             view.active_cellview()
@@ -99,6 +119,19 @@ class ServerInstance(pya.QTcpServer):
                             new_view = new_cview.view()
                             new_view.max_hier()
                             window.current_view_index = window.index_of(new_view)
+                            if technology is not None:
+                                available_technologies = (
+                                    pya.Technology.technology_names()
+                                )
+                                if technology in available_technologies:
+                                    new_view.active_cellview().technology = technology
+                                else:
+                                    send_data["info"] = (
+                                        f"Technology {technology!r} is not available. "
+                                        "Available technologies are "
+                                        f"{pya.Technology.technology_names()}. "
+                                        f"Are you sure you have installed the technology in klayout?"
+                                    )
                             send_data["type"] = "open"
                             send_data["file"] = gds_path
                             connection.write(json.dumps(send_data).encode("utf-8"))
@@ -114,8 +147,19 @@ class ServerInstance(pya.QTcpServer):
                         # Restore the previous position
                         view = window.current_view()
                         view.max_hier()
-                        if previous_view and data["keep_position"] == True:
+                        if previous_view and data["keep_position"] is True:
                             view.zoom_box(previous_view)
+                        if technology is not None:
+                            available_technologies = pya.Technology.technology_names()
+                            if technology in available_technologies:
+                                view.active_cellview().technology = technology
+                            else:
+                                send_data["info"] = (
+                                    f"Technology {technology!r} is not available. "
+                                    "Available technologies are "
+                                    f"{pya.Technology.technology_names()}. "
+                                    f"Are you sure you have installed the technology in klayout?"
+                                )
 
                         # Report progress
                         print("Loaded {}".format(gds_path))
@@ -168,7 +212,7 @@ class ServerInstance(pya.QTcpServer):
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")
-        self.app = app = pya.Application.instance()
+        self.app = pya.Application.instance()
 
     def on_action_click(self):
         self.server.reset(self.action)
@@ -183,6 +227,8 @@ class ServerInstance(pya.QTcpServer):
     def __del__(self):
         self.close()
         super(ServerInstance, self).__del__()
+
+
 def update_icon(action):
     acv = pya.CellView.active()
     idx = acv.index()
@@ -211,7 +257,6 @@ class KliveServer:
             app.process_events()
             sleep(0.1)
         self.instance = ServerInstance(self, parent=mw, action=action)
-
 
 
 server = KliveServer()
