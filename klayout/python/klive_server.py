@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from time import sleep
-from typing import Optional
+from typing import Any, Optional
 
 import pya
 
@@ -178,6 +178,22 @@ class ServerInstance(pya.QTcpServer):
                         l2n.read(l2n_path)
                         l2n_i = view.add_l2ndb(l2n)
                         view.show_l2ndb(l2n_i, view.active_cellview().cell_index)
+                    if "markers" in data:
+                        markers = data["markers"]
+                        view.clear_markers()
+                        for data_marker in markers:
+                            if len(data_marker) == 2:
+                                class_name, string = data_marker
+                                config: dict[str, Any] = {}
+                            else:
+                                class_name, string, config = data_marker[:3]
+                            marker = pya.Marker()
+                            shapeclass = getattr(pya, class_name)
+                            shape = shapeclass.from_s(string)
+                            for setting, value in config.items():
+                                setattr(marker, setting, value)
+                            marker.set(shape)
+                            view.add_marker(marker)
 
                 else:
                     connection.waitForReadyRead(100)
