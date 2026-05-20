@@ -22,18 +22,19 @@ from klive_server import server, update_icon
 
 app = pya.Application.instance()
 mw = app.main_window()
-menu =  mw.menu()
-
-_path = Path(__file__).parent.parent
-off = str(_path/"Koff.png")
-poff = str(_path/"PortOff.png")
-
-reset_server = pya.Action()
-reset_server.icon_text = "Restart klive"
-reset_server.icon = off
-menu.insert_item("@toolbar.end", "reset_server", reset_server)
-
-# Start the server
-server.reset(reset_server)
+if mw is not None:
+  menu =  mw.menu()
+  
+  _path = Path(__file__).parent.parent
+  off = str(_path/"Koff.png")
+  poff = str(_path/"PortOff.png")
+  
+  reset_server = pya.Action()
+  reset_server.icon_text = "Restart klive"
+  reset_server.icon = off
+  menu.insert_item("@toolbar.end", "reset_server", reset_server)
+  
+  # Start the server
+  server.reset(reset_server)
 </text>
 </klayout-macro>
