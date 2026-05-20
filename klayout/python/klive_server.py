@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from time import sleep
-from typing import Optional
+from typing import Any, Optional
 
 import pya
 
@@ -57,7 +57,7 @@ class ServerInstance(pya.QTcpServer):
                     current_view = window.current_view()
                     previous_view = current_view.box() if current_view else None
 
-                    send_data = {"version": "0.4.1", "klayout_version": pya.__version__}
+                    send_data = {"version": "0.4.2", "klayout_version": pya.__version__}
 
                     libs = data.get("libraries", {})
                     for lib_dict in libs:
@@ -178,6 +178,22 @@ class ServerInstance(pya.QTcpServer):
                         l2n.read(l2n_path)
                         l2n_i = view.add_l2ndb(l2n)
                         view.show_l2ndb(l2n_i, view.active_cellview().cell_index)
+                    if "markers" in data:
+                        markers = data["markers"]
+                        view.clear_markers()
+                        for data_marker in markers:
+                            if len(data_marker) == 2:
+                                class_name, string = data_marker
+                                config: dict[str, Any] = {}
+                            else:
+                                class_name, string, config = data_marker[:3]
+                            marker = pya.Marker()
+                            shapeclass = getattr(pya, class_name)
+                            shape = shapeclass.from_s(string)
+                            for setting, value in config.items():
+                                setattr(marker, setting, value)
+                            marker.set(shape)
+                            view.add_marker(marker)
 
                 else:
                     connection.waitForReadyRead(100)
@@ -208,7 +224,7 @@ class ServerInstance(pya.QTcpServer):
         self.server = server
         if self.action is not None and self.isListening():
             self.action.on_triggered = self.on_action_click
-            print("klive 0.4.1 is running")
+            print("klive 0.4.2 is running")
             self.action.icon = live
         else:
             print("klive didn't start correctly. Most likely port tcp/8082")
@@ -220,7 +236,7 @@ class ServerInstance(pya.QTcpServer):
     def close(self):
         super().close()
 
-        print("klive 0.4.1 stopped")
+        print("klive 0.4.2 stopped")
         if self.action is not None and not self.action._destroyed():
             self.action.icon = off
 
